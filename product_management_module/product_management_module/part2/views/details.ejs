@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= resume.fullName %> - Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header with Actions -->
+        <div class="flex justify-between items-center mb-8">
+            <a href="/resumes" class="text-blue-500 hover:text-blue-700">← Back to All Resumes</a>
+            <div class="space-x-2">
+                <a href="/resumes/edit/<%= resume._id %>" 
+                   class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition-colors">
+                    Edit
+                </a>
+                <form action="/resumes/delete/<%= resume._id %>" method="POST" class="inline">
+                    <button type="submit" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+                            onclick="return confirm('Are you sure you want to delete this resume?')">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Resume Content -->
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Header Section -->
+            <div class="bg-blue-600 text-white p-8">
+                <div class="flex items-center space-x-6">
+                    <% if (resume.profileImage) { %>
+                        <img src="<%= resume.profileImage %>" alt="<%= resume.fullName %>" 
+                             class="w-32 h-32 rounded-full object-cover border-4 border-white">
+                    <% } %>
+                    <div class="flex-1">
+                        <h1 class="text-4xl font-bold"><%= resume.fullName %></h1>
+                        <% if (resume.summary) { %>
+                            <p class="text-blue-100 mt-2 text-lg"><%= resume.summary %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="p-8 border-b">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Contact Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-gray-600">📧</span>
+                        <span><%= resume.email %></span>
+                    </div>
+                    <% if (resume.contactNumber) { %>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-gray-600">📱</span>
+                            <span><%= resume.contactNumber %></span>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Research Statement -->
+            <% if (resume.researchStatement) { %>
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Research Statement</h2>
+                    <p class="text-gray-700 leading-relaxed"><%= resume.researchStatement %></p>
+                </div>
+            <% } %>
+
+            <!-- Education & Qualifications -->
+            <% if (resume.qualifications && resume.qualifications.length > 0) { %>
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Education & Qualifications</h2>
+                    <div class="space-y-6">
+                        <% resume.qualifications.forEach(qual => { %>
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <h3 class="text-xl font-semibold text-gray-800"><%= qual.institution %></h3>
+                                <% if (qual.degree) { %>
+                                    <p class="text-gray-600"><%= qual.degree %></p>
+                                <% } %>
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm mt-1">
+                                    <% if (qual.startDate) { %>
+                                        <span><%= qual.startDate.toLocaleDateString() %></span>
+                                    <% } %>
+                                    <% if (qual.endDate) { %>
+                                        <span>to <%= qual.endDate.toLocaleDateString() %></span>
+                                    <% } %>
+                                </div>
+                                <% if (qual.description) { %>
+                                    <p class="text-gray-700 mt-2"><%= qual.description %></p>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Professional Experience -->
+            <% if (resume.professionalExperience && resume.professionalExperience.length > 0) { %>
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Professional Experience</h2>
+                    <div class="space-y-6">
+                        <% resume.professionalExperience.forEach(exp => { %>
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <h3 class="text-xl font-semibold text-gray-800"><%= exp.position %></h3>
+                                <p class="text-gray-600"><%= exp.company %></p>
+                                <div class="flex items-center space-x-4 text-gray-500 text-sm mt-1">
+                                    <% if (exp.startDate) { %>
+                                        <span><%= exp.startDate.toLocaleDateString() %></span>
+                                    <% } %>
+                                    <% if (exp.endDate && !exp.current) { %>
+                                        <span>to <%= exp.endDate.toLocaleDateString() %></span>
+                                    <% } %>
+                                    <% if (exp.current) { %>
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Current</span>
+                                    <% } %>
+                                </div>
+                                <% if (exp.description) { %>
+                                    <p class="text-gray-700 mt-2"><%= exp.description %></p>
+                                <% } %>
+                                <% if (exp.achievements && exp.achievements.length > 0) { %>
+                                    <div class="mt-3">
+                                        <h4 class="font-semibold text-gray-800">Achievements:</h4>
+                                        <ul class="list-disc list-inside text-gray-700 mt-1">
+                                            <% exp.achievements.forEach(achievement => { %>
+                                                <li><%= achievement %></li>
+                                            <% }); %>
+                                        </ul>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Skills -->
+            <% if (resume.skills && resume.skills.length > 0) { %>
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Skills</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <% resume.skills.forEach(skill => { %>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                <%= skill %>
+                            </span>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Languages -->
+            <% if (resume.languages && resume.languages.length > 0) { %>
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Languages</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <% resume.languages.forEach(lang => { %>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700"><%= lang.language %></span>
+                                <span class="text-gray-500 capitalize"><%= lang.proficiency %></span>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Hobbies -->
+            <% if (resume.hobbies && resume.hobbies.length > 0) { %>
+                <div class="p-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Hobbies & Interests</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <% resume.hobbies.forEach(hobby => { %>
+                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                                <%= hobby %>
+                            </span>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="text-center mt-6 text-gray-500">
+            Last updated: <%= resume.updatedAt.toLocaleDateString() %>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Dashboard - Home</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <h1>Cricket Dashboard</h1>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/scores">Scores</a></li>
+            <li><a href="/series">Series</a></li>
+            <li><a href="/teams">Teams</a></li>
+            <li><a href="/search">Search Player</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Recent Matches</h2>
+
+        <% if (error) { %>
+            <div class="no-matches">
+                <h3>Error Loading Matches</h3>
+                <p><%= error %></p>
+            </div>
+        <% } else if (matches && matches.length > 0) { %>
+            <div class="matches-grid">
+                <% matches.forEach(match => { %>
+                    <div class="match-card 
+                        <% if (match.matchInfo.state === 'Complete') { %>completed<% } %>
+                        <% if (match.matchInfo.state === 'In Progress') { %>live<% } %>">
+                        
+                        <div class="match-header">
+                            <div class="series-name">
+                                <%= match.matchInfo.seriesName %>
+                            </div>
+                            <div class="match-status 
+                                <% if (match.matchInfo.state === 'Complete') { %>status-completed<% } %>
+                                <% if (match.matchInfo.state === 'In Progress') { %>status-live<% } %>
+                                <% if (match.matchInfo.state === 'Upcoming') { %>status-upcoming<% } %>">
+                                <%= match.matchInfo.stateTitle || match.matchInfo.state %>
+                            </div>
+                        </div>
+
+                        <h3><%= match.matchInfo.matchDesc %></h3>
+
+                        <div class="teams">
+                            <div class="team">
+                                <div class="team-name">
+                                    <%= match.matchInfo.team1.teamName %>
+                                </div>
+                                <div class="team-short">
+                                    (<%= match.matchInfo.team1.teamSName %>)
+                                </div>
+                            </div>
+                            
+                            <div class="vs">VS</div>
+                            
+                            <div class="team">
+                                <div class="team-name">
+                                    <%= match.matchInfo.team2.teamName %>
+                                </div>
+                                <div class="team-short">
+                                    (<%= match.matchInfo.team2.teamSName %>)
+                                </div>
+                            </div>
+                        </div>
+
+                        <% if (match.matchScore) { %>
+                            <div class="score-info">
+                                <% if (match.matchScore.team1Score) { %>
+                                    <div class="innings-score">
+                                        <strong><%= match.matchInfo.team1.teamSName %>:</strong>
+                                        <% if (match.matchScore.team1Score.inngs1) { %>
+                                            <%= match.matchScore.team1Score.inngs1.runs %>/<%= match.matchScore.team1Score.inngs1.wickets %> 
+                                            (<%= match.matchScore.team1Score.inngs1.overs %> ov)
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                                <% if (match.matchScore.team2Score) { %>
+                                    <div class="innings-score">
+                                        <strong><%= match.matchInfo.team2.teamSName %>:</strong>
+                                        <% if (match.matchScore.team2Score.inngs1) { %>
+                                            <%= match.matchScore.team2Score.inngs1.runs %>/<%= match.matchScore.team2Score.inngs1.wickets %> 
+                                            (<%= match.matchScore.team2Score.inngs1.overs %> ov)
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } %>
+
+                        <div class="match-details">
+                            <div class="venue">
+                                <strong>Venue:</strong> <%= match.matchInfo.venueInfo.ground %>, <%= match.matchInfo.venueInfo.city %>
+                            </div>
+                            <div class="result">
+                                <%= match.matchInfo.status %>
+                            </div>
+                            <div class="format">
+                                <strong>Format:</strong> <%= match.matchInfo.matchFormat %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-matches">
+                <h3>No Recent Matches Found</h3>
+                <p>There are currently no matches to display.</p>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>

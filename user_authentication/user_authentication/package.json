@@ -1,0 +1,12 @@
+{
+  "name": "sehrish_waflab_task1_f25",
+  "version": "1.0.0",
+  "description": "",
+  "main": "file_ops.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Resume - <%= resume.fullName %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">✏️ Edit Resume</h1>
+            <a href="/resumes/<%= resume._id %>" class="text-blue-500 hover:text-blue-700 mt-2 inline-block">← Back to Resume Details</a>
+        </header>
+
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+           
+                <form action="/resumes/update/<%= resume._id %>" method="POST" class="space-y-6">
+
+                <!-- Personal Information -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                            <input type="text" name="fullName" value="<%= resume.fullName %>" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                            <input type="email" name="email" value="<%= resume.email %>" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                            <input type="tel" name="contactNumber" value="<%= resume.contactNumber || '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
+                            <input type="url" name="profileImage" value="<%= resume.profileImage || '' %>" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Professional Summary</label>
+                    <textarea name="summary" rows="4" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Brief overview of your professional background..."><%= resume.summary || '' %></textarea>
+                </div>
+
+                <!-- Research Statement -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Research Statement</label>
+                    <textarea name="researchStatement" rows="4" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Your research interests and statement..."><%= resume.researchStatement || '' %></textarea>
+                </div>
+
+                <!-- Qualifications -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Education & Qualifications</h2>
+                    <div id="qualifications-container">
+                        <% resume.qualifications.forEach((qual, index) => { %>
+                            <div class="qualification-item border p-4 rounded mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Institution *</label>
+                                        <input type="text" name="qualifications[<%= index %>][institution]" 
+                                               value="<%= qual.institution %>" required 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                                        <input type="text" name="qualifications[<%= index %>][degree]" 
+                                               value="<%= qual.degree || '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="date" name="qualifications[<%= index %>][startDate]" 
+                                               value="<%= qual.startDate ? qual.startDate.toISOString().split('T')[0] : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="date" name="qualifications[<%= index %>][endDate]" 
+                                               value="<%= qual.endDate ? qual.endDate.toISOString().split('T')[0] : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea name="qualifications[<%= index %>][description]" rows="2" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-md"><%= qual.description || '' %></textarea>
+                                </div>
+                                <% if (index > 0) { %>
+                                    <button type="button" onclick="this.parentElement.remove()" 
+                                            class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                        Remove
+                                    </button>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <button type="button" onclick="addQualification()" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm">
+                        + Add Another Qualification
+                    </button>
+                </div>
+
+                <!-- Professional Experience -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Professional Experience</h2>
+                    <div id="experience-container">
+                        <% resume.professionalExperience.forEach((exp, index) => { %>
+                            <div class="experience-item border p-4 rounded mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                                        <input type="text" name="professionalExperience[<%= index %>][company]" 
+                                               value="<%= exp.company || '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                                        <input type="text" name="professionalExperience[<%= index %>][position]" 
+                                               value="<%= exp.position || '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="date" name="professionalExperience[<%= index %>][startDate]" 
+                                               value="<%= exp.startDate ? exp.startDate.toISOString().split('T')[0] : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="date" name="professionalExperience[<%= index %>][endDate]" 
+                                               value="<%= exp.endDate ? exp.endDate.toISOString().split('T')[0] : '' %>" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    </div>
+                                </div>
+                                <div class="flex items-center mb-3">
+                                    <input type="checkbox" name="professionalExperience[<%= index %>][current]" value="true" 
+                                           <%= exp.current ? 'checked' : '' %> class="mr-2" id="current<%= index %>">
+                                    <label for="current<%= index %>" class="text-sm text-gray-700">I currently work here</label>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea name="professionalExperience[<%= index %>][description]" rows="3" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-md"><%= exp.description || '' %></textarea>
+                                </div>
+                                <% if (index > 0) { %>
+                                    <button type="button" onclick="this.parentElement.remove()" 
+                                            class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                        Remove
+                                    </button>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <button type="button" onclick="addExperience()" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm">
+                        + Add Another Experience
+                    </button>
+                </div>
+
+                <!-- Skills -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Skills (comma-separated)</label>
+                    <input type="text" name="skills" value="<%= resume.skills.join(', ') %>" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="JavaScript, React, Node.js, Project Management...">
+                </div>
+
+                <!-- Languages -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Languages</label>
+                    <div id="languages-container">
+                        <% resume.languages.forEach((lang, index) => { %>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <input type="text" name="languages[<%= index %>][language]" value="<%= lang.language %>" 
+                                       placeholder="Language" class="px-3 py-2 border border-gray-300 rounded-md flex-1">
+                                <select name="languages[<%= index %>][proficiency]" class="px-3 py-2 border border-gray-300 rounded-md">
+                                    <option value="beginner" <%= lang.proficiency === 'beginner' ? 'selected' : '' %>>Beginner</option>
+                                    <option value="intermediate" <%= lang.proficiency === 'intermediate' ? 'selected' : '' %>>Intermediate</option>
+                                    <option value="advanced" <%= lang.proficiency === 'advanced' ? 'selected' : '' %>>Advanced</option>
+                                    <option value="native" <%= lang.proficiency === 'native' ? 'selected' : '' %>>Native</option>
+                                </select>
+                                <% if (index > 0) { %>
+                                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500">×</button>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    </div>
+                    <button type="button" onclick="addLanguage()" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm mt-2">
+                        + Add Language
+                    </button>
+                </div>
+
+                <!-- Hobbies -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hobbies & Interests (comma-separated)</label>
+                    <input type="text" name="hobbies" value="<%= resume.hobbies.join(', ') %>" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Reading, Traveling, Photography, Sports...">
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6">
+                    <a href="/resumes/<%= resume._id %>" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md transition-colors">
+                        Update Resume
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+            <script>
+        // Get counts from data attributes
+        let qualCount = parseInt(document.getElementById('script-data').getAttribute('data-qual-count'));
+        let expCount = parseInt(document.getElementById('script-data').getAttribute('data-exp-count'));
+        let langCount = parseInt(document.getElementById('script-data').getAttribute('data-lang-count'));
+
+        // Rest of your JavaScript functions...
+        function addQualification() {
+            const container = document.getElementById('qualifications-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'qualification-item border p-4 rounded mb-4';
+            newItem.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Institution *</label>
+                        <input type="text" name="qualifications[${qualCount}][institution]" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                        <input type="text" name="qualifications[${qualCount}][degree]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="qualifications[${qualCount}][startDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" name="qualifications[${qualCount}][endDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="qualifications[${qualCount}][description]" rows="2" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" 
+                        class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            qualCount++;
+        }
+
+        function addExperience() {
+            const container = document.getElementById('experience-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'experience-item border p-4 rounded mb-4';
+            newItem.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                        <input type="text" name="professionalExperience[${expCount}][company]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                        <input type="text" name="professionalExperience[${expCount}][position]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="professionalExperience[${expCount}][startDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" name="professionalExperience[${expCount}][endDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="flex items-center mb-3">
+                    <input type="checkbox" name="professionalExperience[${expCount}][current]" value="true" 
+                           class="mr-2" id="current${expCount}">
+                    <label for="current${expCount}" class="text-sm text-gray-700">I currently work here</label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="professionalExperience[${expCount}][description]" rows="3" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" 
+                        class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            expCount++;
+        }
+
+        function addLanguage() {
+            const container = document.getElementById('languages-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'flex items-center space-x-2 mb-2';
+            newItem.innerHTML = `
+                <input type="text" name="languages[${langCount}][language]" placeholder="Language" 
+                       class="px-3 py-2 border border-gray-300 rounded-md flex-1">
+                <select name="languages[${langCount}][proficiency]" class="px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="native">Native</option>
+                </select>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500">×</button>
+            `;
+            container.appendChild(newItem);
+            langCount++;
+        }
+    </script>
+    <div id="script-data" 
+         data-qual-count="<%= resume.qualifications ? resume.qualifications.length : 0 %>"
+         data-exp-count="<%= resume.professionalExperience ? resume.professionalExperience.length : 0 %>"
+         data-lang-count="<%= resume.languages ? resume.languages.length : 0 %>"
+         style="display: none;">
+    </div>
+</body>
+</html>

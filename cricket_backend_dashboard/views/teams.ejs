@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams - Cricket Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .teams-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        .team-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .team-name {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-short {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .players-section {
+            margin-top: 1.5rem;
+        }
+
+        .role-section {
+            margin-bottom: 2rem;
+        }
+
+        .role-title {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #3498db;
+        }
+
+        .players-list {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .player-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .player-stats {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .player-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .player-link:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Cricket Dashboard</h1>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/scores">Scores</a></li>
+            <li><a href="/series">Series</a></li>
+            <li><a href="/teams">Teams</a></li>
+            <li><a href="/search">Search Player</a></li>
+        </ul>
+    </nav>
+
+    <main class="teams-container">
+        <h2>ICC Men's T20 World Cup Teams</h2>
+
+        <% if (error) { %>
+            <div class="no-data">
+                <h3>Error Loading Teams</h3>
+                <p><%= error %></p>
+            </div>
+        <% } else if (teams.length > 0) { %>
+            <div class="teams-grid">
+                <% teams.forEach(team => { %>
+                    <div class="team-card">
+                        <div class="team-header">
+                            <h3 class="team-name"><%= team.teamName %></h3>
+                            <div class="team-short"><%= team.teamSName %></div>
+                        </div>
+
+                        <div class="players-section">
+                            <!-- Group players by role -->
+                            <% const batsmen = team.players.filter(p => p.role === 'Batsman'); %>
+                            <% const bowlers = team.players.filter(p => p.role === 'Bowler'); %>
+                            <% const allRounders = team.players.filter(p => p.role === 'All-rounder'); %>
+                            
+                            <% if (batsmen.length > 0) { %>
+                                <div class="role-section">
+                                    <h4 class="role-title">Batsmen (<%= batsmen.length %>)</h4>
+                                    <div class="players-list">
+                                        <% batsmen.forEach(player => { %>
+                                            <a href="/player/<%= player.playerId %>" class="player-link">
+                                                <div class="player-item">
+                                                    <span class="player-name"><%= player.name %></span>
+                                                    <span class="player-stats"><%= player.battingStyle %></span>
+                                                </div>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <% if (allRounders.length > 0) { %>
+                                <div class="role-section">
+                                    <h4 class="role-title">All-rounders (<%= allRounders.length %>)</h4>
+                                    <div class="players-list">
+                                        <% allRounders.forEach(player => { %>
+                                            <a href="/player/<%= player.playerId %>" class="player-link">
+                                                <div class="player-item">
+                                                    <span class="player-name"><%= player.name %></span>
+                                                    <span class="player-stats"><%= player.battingStyle %> | <%= player.bowlingStyle %></span>
+                                                </div>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <% if (bowlers.length > 0) { %>
+                                <div class="role-section">
+                                    <h4 class="role-title">Bowlers (<%= bowlers.length %>)</h4>
+                                    <div class="players-list">
+                                        <% bowlers.forEach(player => { %>
+                                            <a href="/player/<%= player.playerId %>" class="player-link">
+                                                <div class="player-item">
+                                                    <span class="player-name"><%= player.name %></span>
+                                                    <span class="player-stats"><%= player.bowlingStyle %></span>
+                                                </div>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-data">
+                <h3>No Teams Found</h3>
+                <p>Unable to load team data at the moment.</p>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">➕ Add New Resume</h1>
+            <a href="/resumes" class="text-blue-500 hover:text-blue-700 mt-2 inline-block">← Back to All Resumes</a>
+        </header>
+
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <form action="/resumes" method="POST" class="space-y-6">
+                
+                <!-- Personal Information -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                            <input type="text" name="fullName" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                            <input type="email" name="email" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                            <input type="tel" name="contactNumber" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
+                            <input type="url" name="profileImage" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Professional Summary</label>
+                    <textarea name="summary" rows="4" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Brief overview of your professional background..."></textarea>
+                </div>
+
+                <!-- Research Statement -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Research Statement</label>
+                    <textarea name="researchStatement" rows="4" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Your research interests and statement..."></textarea>
+                </div>
+
+                <!-- Qualifications -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Education & Qualifications</h2>
+                    <div id="qualifications-container">
+                        <div class="qualification-item border p-4 rounded mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Institution *</label>
+                                    <input type="text" name="qualifications[0][institution]" required 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                                    <input type="text" name="qualifications[0][degree]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                    <input type="date" name="qualifications[0][startDate]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                    <input type="date" name="qualifications[0][endDate]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="qualifications[0][description]" rows="2" 
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addQualification()" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm">
+                        + Add Another Qualification
+                    </button>
+                </div>
+
+                <!-- Professional Experience -->
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Professional Experience</h2>
+                    <div id="experience-container">
+                        <div class="experience-item border p-4 rounded mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                                    <input type="text" name="professionalExperience[0][company]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                                    <input type="text" name="professionalExperience[0][position]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                    <input type="date" name="professionalExperience[0][startDate]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                    <input type="date" name="professionalExperience[0][endDate]" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                            </div>
+                            <div class="flex items-center mb-3">
+                                <input type="checkbox" name="professionalExperience[0][current]" value="true" 
+                                       class="mr-2" id="current0">
+                                <label for="current0" class="text-sm text-gray-700">I currently work here</label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="professionalExperience[0][description]" rows="3" 
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addExperience()" 
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm">
+                        + Add Another Experience
+                    </button>
+                </div>
+
+                <!-- Skills -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Skills (comma-separated)</label>
+                    <input type="text" name="skills" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="JavaScript, React, Node.js, Project Management...">
+                </div>
+
+                <!-- Languages -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Languages (comma-separated with proficiency)</label>
+                    <input type="text" name="languagesInput" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="English:native, Spanish:intermediate, French:beginner...">
+                    <p class="text-xs text-gray-500 mt-1">Format: Language:proficiency (beginner, intermediate, advanced, native)</p>
+                </div>
+
+                <!-- Hobbies -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hobbies & Interests (comma-separated)</label>
+                    <input type="text" name="hobbies" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Reading, Traveling, Photography, Sports...">
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6">
+                    <a href="/resumes" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md transition-colors">
+                        Create Resume
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let qualCount = 1;
+        let expCount = 1;
+
+        function addQualification() {
+            const container = document.getElementById('qualifications-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'qualification-item border p-4 rounded mb-4';
+            newItem.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Institution *</label>
+                        <input type="text" name="qualifications[${qualCount}][institution]" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                        <input type="text" name="qualifications[${qualCount}][degree]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="qualifications[${qualCount}][startDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" name="qualifications[${qualCount}][endDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="qualifications[${qualCount}][description]" rows="2" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" 
+                        class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            qualCount++;
+        }
+
+        function addExperience() {
+            const container = document.getElementById('experience-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'experience-item border p-4 rounded mb-4';
+            newItem.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                        <input type="text" name="professionalExperience[${expCount}][company]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                        <input type="text" name="professionalExperience[${expCount}][position]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="professionalExperience[${expCount}][startDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" name="professionalExperience[${expCount}][endDate]" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="flex items-center mb-3">
+                    <input type="checkbox" name="professionalExperience[${expCount}][current]" value="true" 
+                           class="mr-2" id="current${expCount}">
+                    <label for="current${expCount}" class="text-sm text-gray-700">I currently work here</label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="professionalExperience[${expCount}][description]" rows="3" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" 
+                        class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            expCount++;
+        }
+    </script>
+</body>
+</html>
